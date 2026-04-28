@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FlowerShop.Entities\FlowerShop.Entities.csproj" />
+    <ProjectReference Include="..\FlowerShop.Repository\FlowerShop.Repository.csproj" />
+    <ProjectReference Include="..\FlowerShop.Common\FlowerShop.Common.csproj" />
+  </ItemGroup>
+</Project>
