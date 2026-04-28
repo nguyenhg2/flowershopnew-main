@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FlowerShop.Repository")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5ffbd7322e44894ae295d85a7f366a11ec1b2f5c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a722dc6284b76d6d7f6c526f391b55e6ef86befa")]
 [assembly: System.Reflection.AssemblyProductAttribute("FlowerShop.Repository")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FlowerShop.Repository")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
