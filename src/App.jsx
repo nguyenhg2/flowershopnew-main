@@ -10,6 +10,7 @@ import { CategoryPage } from './pages/Category';
 import { ProductDetailPage } from './pages/ProductDetail';
 import { ProfilePage } from './pages/Profile';
 import { ContactPage } from './pages/Contact';
+import { AdminPage } from './pages/Admin';
 
 function App() {
   const { page, showLogin, showRegister } = useContext(AppContext);
@@ -23,6 +24,7 @@ function App() {
       case 'product': return <ProductDetailPage />;
       case 'profile': return <ProfilePage />;
       case 'contact': return <ContactPage />;
+      case 'admin': return <AdminPage />;
       default: return <Home />;
     }
   };
