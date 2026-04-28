@@ -22,6 +22,7 @@ export default function ProductCard({ p }) {
 
   const displayPrice = p.salePrice || p.sale || null;
   const originalPrice = p.price;
+  const imgSrc = p.img || p.imageUrl || '';
 
   return (
     <div
@@ -51,16 +52,12 @@ export default function ProductCard({ p }) {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {(p.img || p.imageUrl) && (p.img || p.imageUrl).startsWith('/') ? (
-          <img src={p.img || p.imageUrl} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-        ) : null}
-        {(!(p.img || p.imageUrl) || !(p.img || p.imageUrl).startsWith('/')) && (
-          <span style={{ fontSize: 64 }}>{p.img || p.imageUrl || ''}</span>
-        )}
-        {((p.img || p.imageUrl) && (p.img || p.imageUrl).startsWith('/')) && (
-          <div style={{ display: 'none', width: '100%', height: '100%', background: '#f0e6f0', fontSize: 48, color: '#c84b6b', alignItems: 'center', justifyContent: 'center' }}>
-            {p.name?.charAt(0) || 'H'}
-          </div>
+        {imgSrc && (imgSrc.startsWith('http') || imgSrc.startsWith('/')) ? (
+          <img src={imgSrc} alt={p.name}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={(e) => { e.target.style.display = 'none'; }} />
+        ) : (
+          <span style={{ fontSize: 64, color: '#c84b6b' }}>{p.name?.charAt(0) || 'H'}</span>
         )}
         {displayPrice && (
           <span style={{
@@ -78,7 +75,7 @@ export default function ProductCard({ p }) {
             background: '#4a7c59', color: '#fff',
             padding: '2px 8px', borderRadius: 8,
             fontSize: 11, fontWeight: 700
-          }}>MOI</span>
+          }}>MỚI</span>
         )}
       </div>
       <div style={{ padding: '14px 16px' }}>
@@ -105,14 +102,14 @@ export default function ProductCard({ p }) {
         </div>
         {(p.sold !== undefined || p.soldCount !== undefined) && (
           <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 8 }}>
-            Da ban: {p.sold || p.soldCount || 0}
+            Đã bán: {p.sold || p.soldCount || 0}
           </div>
         )}
         <button
           className="btn btn-primary"
           style={{ width: '100%', justifyContent: 'center', fontSize: 13 }}
           onClick={handleAdd}>
-          Them vao gio
+          Thêm vào giỏ
         </button>
       </div>
     </div>

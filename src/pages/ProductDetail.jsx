@@ -31,7 +31,7 @@ export function ProductDetailPage() {
             .then(r => {
               setRelated((r.data.items || []).filter(p => p.id !== productId));
             })
-            .catch(() => {});
+            .catch(() => { });
         }
       })
       .catch(() => setProduct(null))
@@ -60,11 +60,11 @@ export function ProductDetailPage() {
 
   const handleSubmitReview = async () => {
     if (!user) {
-      showToast('Vui long dang nhap de danh gia');
+      showToast('Vui lòng đăng nhập để đánh giá');
       return;
     }
     if (!reviewComment.trim()) {
-      showToast('Vui long nhap noi dung danh gia');
+      showToast('Vui lòng nhập nội dung đánh giá');
       return;
     }
     try {
@@ -77,16 +77,16 @@ export function ProductDetailPage() {
       setReviewStars(5);
       const res = await reviewApi.getByProduct(productId);
       setReviews(res.data);
-      showToast('Da gui danh gia');
+      showToast('Đã gửi đánh giá');
     } catch {
-      showToast('Gui danh gia that bai');
+      showToast('Gửi đánh giá thất bại');
     }
   };
 
   if (loading) {
     return (
       <div className="page" style={{ textAlign: 'center', padding: 80 }}>
-        Dang tai...
+        Đang tải...
       </div>
     );
   }
@@ -94,8 +94,8 @@ export function ProductDetailPage() {
   if (!product) {
     return (
       <div className="page" style={{ textAlign: 'center', padding: 80 }}>
-        <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Khong tim thay san pham</div>
-        <button className="btn btn-primary" onClick={() => navigate('home')}>Ve trang chu</button>
+        <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Không tìm thấy sản phẩm</div>
+        <button className="btn btn-primary" onClick={() => navigate('home')}>Về trang chủ</button>
       </div>
     );
   }
@@ -104,6 +104,7 @@ export function ProductDetailPage() {
   const avgStars = reviews.length > 0
     ? (reviews.reduce((s, r) => s + r.stars, 0) / reviews.length).toFixed(1)
     : 0;
+  const imgSrc = product.imageUrl || '';
 
   const mapProduct = (p) => ({
     id: p.id, name: p.name, price: p.price,
@@ -115,7 +116,7 @@ export function ProductDetailPage() {
     <div className="page">
       <div style={{ background: 'var(--warm)', padding: '16px 0', marginBottom: 28 }}>
         <div className="container" style={{ fontSize: 13, color: 'var(--muted)' }}>
-          <span style={{ cursor: 'pointer' }} onClick={() => navigate('home')}>Trang chu</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => navigate('home')}>Trang chủ</span>
           {' > '}
           {product.category && (
             <>
@@ -140,16 +141,12 @@ export function ProductDetailPage() {
             height: 400, display: 'flex', alignItems: 'center',
             justifyContent: 'center', overflow: 'hidden'
           }}>
-            {product.imageUrl && product.imageUrl.startsWith('/') ? (
-              <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-            ) : null}
-            {(!product.imageUrl || !product.imageUrl.startsWith('/')) && (
-              <span style={{ fontSize: 120 }}>{product.imageUrl || ''}</span>
-            )}
-            {(product.imageUrl && product.imageUrl.startsWith('/')) && (
-              <div style={{ display: 'none', fontSize: 120, color: '#c84b6b', alignItems: 'center', justifyContent: 'center' }}>
-                {product.name?.charAt(0) || 'H'}
-              </div>
+            {imgSrc && (imgSrc.startsWith('http') || imgSrc.startsWith('/')) ? (
+              <img src={imgSrc} alt={product.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                onError={(e) => { e.target.style.display = 'none'; }} />
+            ) : (
+              <span style={{ fontSize: 120, color: '#c84b6b' }}>{product.name?.charAt(0) || 'H'}</span>
             )}
           </div>
 
@@ -163,17 +160,17 @@ export function ProductDetailPage() {
 
             {product.code && (
               <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 8 }}>
-                Ma SP: {product.code}
+                Mã SP: {product.code}
               </div>
             )}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
               <Stars count={Math.round(avgStars)} size={16} />
               <span style={{ fontSize: 14, color: 'var(--muted)' }}>
-                {avgStars} ({reviews.length} danh gia)
+                {avgStars} ({reviews.length} đánh giá)
               </span>
               <span style={{ fontSize: 14, color: 'var(--muted)' }}>
-                Da ban: {product.soldCount}
+                Đã bán: {product.soldCount}
               </span>
             </div>
 
@@ -206,7 +203,7 @@ export function ProductDetailPage() {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
-              <span style={{ fontSize: 14, fontWeight: 600 }}>So luong:</span>
+              <span style={{ fontSize: 14, fontWeight: 600 }}>Số lượng:</span>
               <div className="qty-ctrl">
                 <button className="qty-btn" style={{ borderRadius: '8px 0 0 8px' }}
                   onClick={() => setQty(q => Math.max(1, q - 1))}>-</button>
@@ -217,14 +214,14 @@ export function ProductDetailPage() {
                   onClick={() => setQty(q => q + 1)}>+</button>
               </div>
               <span style={{ fontSize: 13, color: 'var(--muted)' }}>
-                Con {product.stock} san pham
+                Còn {product.stock} sản phẩm
               </span>
             </div>
 
             <div style={{ display: 'flex', gap: 12 }}>
               <button className="btn btn-primary" style={{ padding: '14px 32px', fontSize: 16 }}
                 onClick={handleAddToCart}>
-                Them vao gio
+                Thêm vào giỏ
               </button>
               <button className="btn btn-outline" style={{ padding: '14px 32px', fontSize: 16 }}
                 onClick={handleBuyNow}>
@@ -240,7 +237,7 @@ export function ProductDetailPage() {
           padding: 28, marginBottom: 48
         }}>
           <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 22, marginBottom: 20 }}>
-            Danh gia san pham ({reviews.length})
+            Đánh giá sản phẩm ({reviews.length})
           </div>
 
           {user && (
@@ -248,12 +245,11 @@ export function ProductDetailPage() {
               border: '1px solid var(--border)', borderRadius: 12,
               padding: 20, marginBottom: 24
             }}>
-              <div style={{ fontWeight: 700, marginBottom: 12 }}>Viet danh gia cua ban</div>
+              <div style={{ fontWeight: 700, marginBottom: 12 }}>Viết đánh giá của bạn</div>
               <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center' }}>
-                <span style={{ fontSize: 14 }}>Cham diem:</span>
+                <span style={{ fontSize: 14 }}>Chấm điểm:</span>
                 {[1, 2, 3, 4, 5].map(s => (
-                  <span
-                    key={s}
+                  <span key={s}
                     onClick={() => setReviewStars(s)}
                     style={{
                       cursor: 'pointer', fontSize: 22,
@@ -266,18 +262,18 @@ export function ProductDetailPage() {
               <textarea
                 value={reviewComment}
                 onChange={e => setReviewComment(e.target.value)}
-                placeholder="Chia se cam nhan cua ban ve san pham..."
+                placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..."
                 rows={3}
                 style={{ width: '100%', marginBottom: 12 }} />
               <button className="btn btn-primary" onClick={handleSubmitReview}>
-                Gui danh gia
+                Gửi đánh giá
               </button>
             </div>
           )}
 
           {reviews.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 32, color: 'var(--muted)' }}>
-              Chua co danh gia nao. Hay la nguoi dau tien danh gia san pham nay!
+              Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này!
             </div>
           ) : (
             reviews.map(r => (
@@ -295,7 +291,7 @@ export function ProductDetailPage() {
                     {(r.userName || 'K').charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: 14 }}>{r.userName || 'Khach hang'}</div>
+                    <div style={{ fontWeight: 700, fontSize: 14 }}>{r.userName || 'Khách hàng'}</div>
                     <Stars count={r.stars} size={12} />
                   </div>
                   <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--muted)' }}>
@@ -311,7 +307,7 @@ export function ProductDetailPage() {
         {related.length > 0 && (
           <div style={{ marginBottom: 48 }}>
             <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 22, marginBottom: 20 }}>
-              San pham lien quan
+              Sản phẩm liên quan
             </div>
             <div className="grid-4">
               {related.map(p => <ProductCard key={p.id} p={mapProduct(p)} />)}

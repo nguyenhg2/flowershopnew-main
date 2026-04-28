@@ -11,16 +11,16 @@ export function LoginModal() {
 
   const login = async () => {
     setErr('');
-    if (!email || !pass) { setErr('Vui long nhap email va mat khau'); return; }
+    if (!email || !pass) { setErr('Vui lòng nhập email và mật khẩu'); return; }
     setLoading(true);
     try {
       const res = await authApi.login(email, pass);
       localStorage.setItem('flowershop_token', res.data.token);
       setUser(res.data.user);
       setShowLogin(false);
-      showToast('Dang nhap thanh cong');
+      showToast('Đăng nhập thành công');
     } catch (error) {
-      setErr(error.response?.data?.message || 'Email hoac mat khau khong dung');
+      setErr(error.response?.data?.message || 'Email hoặc mật khẩu không đúng');
     } finally {
       setLoading(false);
     }
@@ -30,8 +30,8 @@ export function LoginModal() {
     <div className="modal-backdrop" onClick={() => setShowLogin(false)}>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 24, marginBottom: 4 }}>Dang nhap</div>
-          <div style={{ color: 'var(--muted)', fontSize: 14 }}>Chao mung tro lai Mong Lan Flower</div>
+          <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 24, marginBottom: 4 }}>Đăng nhập</div>
+          <div style={{ color: 'var(--muted)', fontSize: 14 }}>Chào mừng trở lại Mộng Lan Flower</div>
         </div>
         {err && <div className="alert alert-error" style={{ marginBottom: 16 }}>{err}</div>}
         <div className="form-group">
@@ -39,20 +39,20 @@ export function LoginModal() {
           <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="email@example.com" />
         </div>
         <div className="form-group">
-          <label>Mat khau</label>
-          <input type="password" value={pass} onChange={e => setPass(e.target.value)} placeholder="Mat khau"
+          <label>Mật khẩu</label>
+          <input type="password" value={pass} onChange={e => setPass(e.target.value)} placeholder="Mật khẩu"
             onKeyDown={e => e.key === 'Enter' && login()} />
         </div>
         <button className="btn btn-primary"
           style={{ width: '100%', justifyContent: 'center', padding: '12px', fontSize: 16, marginTop: 8 }}
           onClick={login} disabled={loading}>
-          {loading ? 'Dang xu ly...' : 'Dang nhap'}
+          {loading ? 'Đang xử lý...' : 'Đăng nhập'}
         </button>
         <div style={{ textAlign: 'center', marginTop: 16, fontSize: 14, color: 'var(--muted)' }}>
-          Chua co tai khoan?{' '}
+          Chưa có tài khoản?{' '}
           <span style={{ color: 'var(--rose)', cursor: 'pointer', fontWeight: 700 }}
             onClick={() => { setShowLogin(false); setShowRegister(true); }}>
-            Dang ky ngay
+            Đăng ký ngay
           </span>
         </div>
       </div>
@@ -70,13 +70,13 @@ export function RegisterModal() {
   const register = async () => {
     setErr('');
     if (!form.fullName || !form.email || !form.phone || !form.password) {
-      setErr('Vui long dien day du thong tin'); return;
+      setErr('Vui lòng điền đầy đủ thông tin'); return;
     }
     if (form.password !== form.confirm) {
-      setErr('Mat khau xac nhan khong khop'); return;
+      setErr('Mật khẩu xác nhận không khớp'); return;
     }
     if (form.password.length < 6) {
-      setErr('Mat khau phai co it nhat 6 ky tu'); return;
+      setErr('Mật khẩu phải có ít nhất 6 ký tự'); return;
     }
     setLoading(true);
     try {
@@ -86,11 +86,11 @@ export function RegisterModal() {
         phone: form.phone,
         password: form.password
       });
-      showToast('Dang ky thanh cong! Vui long dang nhap.');
+      showToast('Đăng ký thành công! Vui lòng đăng nhập.');
       setShowRegister(false);
       setShowLogin(true);
     } catch (error) {
-      setErr(error.response?.data?.message || 'Dang ky that bai');
+      setErr(error.response?.data?.message || 'Đăng ký thất bại');
     } finally {
       setLoading(false);
     }
@@ -100,31 +100,31 @@ export function RegisterModal() {
     <div className="modal-backdrop" onClick={() => setShowRegister(false)}>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 24, marginBottom: 4 }}>Tao tai khoan</div>
+          <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 24, marginBottom: 4 }}>Tạo tài khoản</div>
         </div>
         {err && <div className="alert alert-error" style={{ marginBottom: 16 }}>{err}</div>}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <div className="form-group"><label>Ho ten *</label>
-            <input value={form.fullName} onChange={e => set('fullName', e.target.value)} placeholder="Nguyen Van A" /></div>
-          <div className="form-group"><label>So dien thoai *</label>
+          <div className="form-group"><label>Họ tên *</label>
+            <input value={form.fullName} onChange={e => set('fullName', e.target.value)} placeholder="Nguyễn Văn A" /></div>
+          <div className="form-group"><label>Số điện thoại *</label>
             <input value={form.phone} onChange={e => set('phone', e.target.value)} placeholder="0901234567" /></div>
         </div>
         <div className="form-group"><label>Email *</label>
           <input type="email" value={form.email} onChange={e => set('email', e.target.value)} placeholder="email@example.com" /></div>
-        <div className="form-group"><label>Mat khau *</label>
-          <input type="password" value={form.password} onChange={e => set('password', e.target.value)} placeholder="Toi thieu 6 ky tu" /></div>
-        <div className="form-group"><label>Xac nhan mat khau *</label>
-          <input type="password" value={form.confirm} onChange={e => set('confirm', e.target.value)} placeholder="Nhap lai mat khau" /></div>
+        <div className="form-group"><label>Mật khẩu *</label>
+          <input type="password" value={form.password} onChange={e => set('password', e.target.value)} placeholder="Tối thiểu 6 ký tự" /></div>
+        <div className="form-group"><label>Xác nhận mật khẩu *</label>
+          <input type="password" value={form.confirm} onChange={e => set('confirm', e.target.value)} placeholder="Nhập lại mật khẩu" /></div>
         <button className="btn btn-primary"
           style={{ width: '100%', justifyContent: 'center', padding: '12px', fontSize: 16, marginTop: 4 }}
           onClick={register} disabled={loading}>
-          {loading ? 'Dang xu ly...' : 'Dang ky'}
+          {loading ? 'Đang xử lý...' : 'Đăng ký'}
         </button>
         <div style={{ textAlign: 'center', marginTop: 16, fontSize: 14, color: 'var(--muted)' }}>
-          Da co tai khoan?{' '}
+          Đã có tài khoản?{' '}
           <span style={{ color: 'var(--rose)', cursor: 'pointer', fontWeight: 700 }}
             onClick={() => { setShowRegister(false); setShowLogin(true); }}>
-            Dang nhap
+            Đăng nhập
           </span>
         </div>
       </div>

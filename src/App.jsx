@@ -10,21 +10,21 @@ import { CategoryPage } from './pages/Category';
 import { ProductDetailPage } from './pages/ProductDetail';
 import { ProfilePage } from './pages/Profile';
 import { ContactPage } from './pages/Contact';
-import { AdminPage } from './pages/Admin';
+import { CheckoutPage } from './pages/Checkout';
 
 function App() {
   const { page, showLogin, showRegister } = useContext(AppContext);
 
   const renderPage = () => {
-    switch(page) {
+    switch (page) {
       case 'home': return <Home />;
       case 'cart': return <Cart />;
+      case 'checkout': return <CheckoutPage />;
       case 'search': return <SearchPage />;
       case 'category': return <CategoryPage />;
       case 'product': return <ProductDetailPage />;
       case 'profile': return <ProfilePage />;
       case 'contact': return <ContactPage />;
-      case 'admin': return <AdminPage />;
       default: return <Home />;
     }
   };

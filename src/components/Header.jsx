@@ -17,7 +17,7 @@ export default function Header() {
     setUser(null);
     localStorage.removeItem('flowershop_token');
     localStorage.removeItem('flowershop_user');
-    showToast('Da dang xuat');
+    showToast('Đã đăng xuất');
     navigate('home');
   };
 
@@ -28,40 +28,28 @@ export default function Header() {
           <div
             onClick={() => navigate('home')}
             style={{ cursor: 'pointer', fontFamily: 'Playfair Display,serif', fontSize: 22, fontWeight: 600, color: 'var(--rose)', whiteSpace: 'nowrap' }}>
-            Mong Lan
+            Mộng Lan
           </div>
           <nav style={{ display: 'flex', gap: 4, flex: 1 }}>
-            <button
-              className="btn btn-ghost"
-              style={{ fontSize: 13 }}
-              onClick={() => navigate('contact')}>
-              Lien he
-            </button>
-            <button
-              className="btn btn-ghost"
-              style={{ fontSize: 13 }}
-              onClick={() => showToast('Chuc nang danh gia dang duoc phat trien')}>
-              Danh gia
-            </button>
-            <button
-              className="btn btn-ghost"
-              style={{ fontSize: 13 }}
-              onClick={() => navigate('category', { catId: 1, catName: 'Tat ca' })}>
-              Tat ca san pham
+            <button className="btn btn-ghost" style={{ fontSize: 13 }}
+              onClick={() => navigate('contact')}>Liên hệ</button>
+            <button className="btn btn-ghost" style={{ fontSize: 13 }}
+              onClick={() => navigate('category', { catId: null, catName: 'Tất cả sản phẩm' })}>
+              Tất cả sản phẩm
             </button>
           </nav>
           <form onSubmit={doSearch} style={{ display: 'flex', gap: 0, maxWidth: 240 }}>
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Tim hoa..."
+              placeholder="Tìm hoa..."
               style={{ borderRadius: '20px 0 0 20px', paddingRight: 8 }} />
             <button type="submit" className="btn btn-primary" style={{ borderRadius: '0 20px 20px 0', padding: '8px 14px' }}>
-              Tim
+              Tìm
             </button>
           </form>
           <button className="btn btn-ghost" onClick={() => navigate('cart')} style={{ position: 'relative', padding: '8px 12px' }}>
-            Gio hang
+            Giỏ hàng
             {cartCount > 0 && (
               <span style={{
                 position: 'absolute', top: 0, right: 0, background: 'var(--rose)', color: '#fff',
@@ -73,18 +61,18 @@ export default function Header() {
           {user ? (
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               {isAdmin && (
-                <button className="btn btn-ghost" style={{ fontSize: 13, color: 'var(--rose)' }}
-                  onClick={() => navigate('admin')}>
-                  Admin
-                </button>
+                <a href="/admin" target="_blank" rel="noopener noreferrer"
+                  className="btn btn-ghost" style={{ fontSize: 13, color: 'var(--rose)' }}>
+                  Quản trị
+                </a>
               )}
               <button className="btn btn-ghost" onClick={() => navigate('profile')} style={{ fontSize: 13 }}>
-                {user.fullName ? user.fullName.split(' ').pop() : 'Tai khoan'}
+                {user.fullName ? user.fullName.split(' ').pop() : 'Tài khoản'}
               </button>
-              <button className="btn btn-ghost" style={{ fontSize: 13 }} onClick={handleLogout}>Dang xuat</button>
+              <button className="btn btn-ghost" style={{ fontSize: 13 }} onClick={handleLogout}>Đăng xuất</button>
             </div>
           ) : (
-            <button className="btn btn-outline" onClick={() => setShowLogin(true)} style={{ whiteSpace: 'nowrap' }}>Dang nhap</button>
+            <button className="btn btn-outline" onClick={() => setShowLogin(true)} style={{ whiteSpace: 'nowrap' }}>Đăng nhập</button>
           )}
         </div>
       </div>

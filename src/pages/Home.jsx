@@ -15,11 +15,11 @@ export default function HomePage() {
   const [bannerIdx, setBannerIdx] = useState(0);
 
   useEffect(() => {
-    bannerApi.getActive().then(res => setBanners(res.data)).catch(() => {});
-    categoryApi.getAll().then(res => setCategories(res.data)).catch(() => {});
-    productApi.getOnSale(4).then(res => setSaleProducts(res.data)).catch(() => {});
-    productApi.getBestSellers(4).then(res => setBestSellers(res.data)).catch(() => {});
-    productApi.getNewArrivals(4).then(res => setNewArrivals(res.data)).catch(() => {});
+    bannerApi.getActive().then(res => setBanners(res.data)).catch(() => { });
+    categoryApi.getAll().then(res => setCategories(res.data)).catch(() => { });
+    productApi.getOnSale(4).then(res => setSaleProducts(res.data)).catch(() => { });
+    productApi.getBestSellers(4).then(res => setBestSellers(res.data)).catch(() => { });
+    productApi.getNewArrivals(4).then(res => setNewArrivals(res.data)).catch(() => { });
   }, []);
 
   useEffect(() => {
@@ -67,8 +67,8 @@ export default function HomePage() {
       )}
 
       <div className="container" style={{ marginBottom: 48 }}>
-        <div className="section-title">Danh muc san pham</div>
-        <div className="section-sub">Tim hoa phu hop cho moi dip</div>
+        <div className="section-title">Danh mục sản phẩm</div>
+        <div className="section-sub">Tìm hoa phù hợp cho mọi dịp</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 16 }}>
           {categories.map(c => (
             <div key={c.id} onClick={() => navigate('category', { catId: c.id, catName: c.name })}
@@ -83,7 +83,7 @@ export default function HomePage() {
 
       {saleProducts.length > 0 && (
         <div className="container" style={{ marginBottom: 48 }}>
-          <div className="section-title">Dang Giam Gia</div>
+          <div className="section-title">Đang giảm giá</div>
           <div className="grid-4">{saleProducts.map(p => <ProductCard key={p.id} p={mapProduct(p)} />)}</div>
         </div>
       )}
@@ -91,7 +91,7 @@ export default function HomePage() {
       {bestSellers.length > 0 && (
         <div style={{ background: 'var(--warm)', padding: '48px 0' }}>
           <div className="container">
-            <div className="section-title">Ban Chay Nhat</div>
+            <div className="section-title">Bán chạy nhất</div>
             <div className="grid-4">{bestSellers.map(p => <ProductCard key={p.id} p={mapProduct(p)} />)}</div>
           </div>
         </div>
@@ -99,7 +99,7 @@ export default function HomePage() {
 
       {newArrivals.length > 0 && (
         <div className="container" style={{ marginTop: 48 }}>
-          <div className="section-title">Hoa Moi Ve</div>
+          <div className="section-title">Hoa mới về</div>
           <div className="grid-4">{newArrivals.map(p => <ProductCard key={p.id} p={mapProduct(p)} />)}</div>
         </div>
       )}

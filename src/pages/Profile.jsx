@@ -34,8 +34,8 @@ export function ProfilePage() {
         display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Vui long dang nhap</div>
-          <button className="btn btn-primary" onClick={() => setShowLogin(true)}>Dang nhap</button>
+          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Vui lòng đăng nhập</div>
+          <button className="btn btn-primary" onClick={() => setShowLogin(true)}>Đăng nhập</button>
         </div>
       </div>
     );
@@ -46,9 +46,9 @@ export function ProfilePage() {
     try {
       const res = await authApi.updateProfile({ fullName: editName, phone: editPhone });
       setUser(res.data);
-      showToast('Cap nhat thong tin thanh cong');
+      showToast('Cập nhật thông tin thành công');
     } catch {
-      showToast('Cap nhat that bai');
+      showToast('Cập nhật thất bại');
     } finally {
       setLoading(false);
     }
@@ -56,11 +56,11 @@ export function ProfilePage() {
 
   const handleChangePassword = async () => {
     if (newPass !== confirmPass) {
-      showToast('Mat khau xac nhan khong khop');
+      showToast('Mật khẩu xác nhận không khớp');
       return;
     }
     if (newPass.length < 6) {
-      showToast('Mat khau moi phai co it nhat 6 ky tu');
+      showToast('Mật khẩu mới phải có ít nhất 6 ký tự');
       return;
     }
     setLoading(true);
@@ -69,38 +69,38 @@ export function ProfilePage() {
       setOldPass('');
       setNewPass('');
       setConfirmPass('');
-      showToast('Doi mat khau thanh cong');
+      showToast('Đổi mật khẩu thành công');
     } catch (error) {
-      showToast(error.response?.data?.message || 'Doi mat khau that bai');
+      showToast(error.response?.data?.message || 'Đổi mật khẩu thất bại');
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancelOrder = async (id) => {
-    if (!confirm('Xac nhan huy don hang?')) return;
+    if (!confirm('Xác nhận hủy đơn hàng?')) return;
     try {
       await orderApi.cancel(id);
       loadOrders();
-      showToast('Da huy don hang');
+      showToast('Đã hủy đơn hàng');
     } catch (error) {
-      showToast(error.response?.data?.message || 'Huy don that bai');
+      showToast(error.response?.data?.message || 'Hủy đơn thất bại');
     }
   };
 
   const statusMap = {
-    Pending: 'Cho xu ly',
-    Confirmed: 'Da xac nhan',
-    Shipping: 'Dang giao',
-    Completed: 'Hoan thanh',
-    Cancelled: 'Da huy'
+    Pending: 'Chờ xử lý',
+    Confirmed: 'Đã xác nhận',
+    Shipping: 'Đang giao',
+    Completed: 'Hoàn thành',
+    Cancelled: 'Đã hủy'
   };
 
   return (
     <div className="page">
       <div style={{ background: 'var(--warm)', padding: '28px 0', marginBottom: 28 }}>
         <div className="container">
-          <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 28 }}>Tai khoan cua toi</div>
+          <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 28 }}>Tài khoản của tôi</div>
         </div>
       </div>
       <div className="container" style={{
@@ -127,9 +127,9 @@ export function ProfilePage() {
             <div style={{ fontSize: 13, color: 'var(--muted)' }}>{user.email}</div>
           </div>
           {[
-            ['info', 'Thong tin ca nhan'],
-            ['orders', 'Lich su don hang'],
-            ['password', 'Doi mat khau']
+            ['info', 'Thông tin cá nhân'],
+            ['orders', 'Lịch sử đơn hàng'],
+            ['password', 'Đổi mật khẩu']
           ].map(([k, v]) => (
             <div key={k} onClick={() => setTab(k)} style={{
               padding: '10px 14px', borderRadius: 8, cursor: 'pointer',
@@ -147,14 +147,14 @@ export function ProfilePage() {
         }}>
           {tab === 'info' && (
             <div>
-              <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 20 }}>Thong tin ca nhan</div>
+              <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 20 }}>Thông tin cá nhân</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
                 <div className="form-group">
-                  <label>Ho ten</label>
+                  <label>Họ tên</label>
                   <input value={editName} onChange={e => setEditName(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label>So dien thoai</label>
+                  <label>Số điện thoại</label>
                   <input value={editPhone} onChange={e => setEditPhone(e.target.value)} />
                 </div>
               </div>
@@ -163,28 +163,28 @@ export function ProfilePage() {
                 <input value={user.email} disabled style={{ background: '#f5f5f5' }} />
               </div>
               <button className="btn btn-primary" onClick={handleUpdateProfile} disabled={loading}>
-                {loading ? 'Dang luu...' : 'Luu thay doi'}
+                {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
               </button>
             </div>
           )}
 
           {tab === 'password' && (
             <div>
-              <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 20 }}>Doi mat khau</div>
+              <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 20 }}>Đổi mật khẩu</div>
               <div className="form-group">
-                <label>Mat khau cu</label>
+                <label>Mật khẩu cũ</label>
                 <input type="password" value={oldPass} onChange={e => setOldPass(e.target.value)} />
               </div>
               <div className="form-group">
-                <label>Mat khau moi</label>
+                <label>Mật khẩu mới</label>
                 <input type="password" value={newPass} onChange={e => setNewPass(e.target.value)} />
               </div>
               <div className="form-group">
-                <label>Xac nhan mat khau moi</label>
+                <label>Xác nhận mật khẩu mới</label>
                 <input type="password" value={confirmPass} onChange={e => setConfirmPass(e.target.value)} />
               </div>
               <button className="btn btn-primary" onClick={handleChangePassword} disabled={loading}>
-                {loading ? 'Dang xu ly...' : 'Doi mat khau'}
+                {loading ? 'Đang xử lý...' : 'Đổi mật khẩu'}
               </button>
             </div>
           )}
@@ -192,11 +192,11 @@ export function ProfilePage() {
           {tab === 'orders' && (
             <div>
               <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 20 }}>
-                Lich su don hang ({orders.length})
+                Lịch sử đơn hàng ({orders.length})
               </div>
               {orders.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: 40, color: 'var(--muted)' }}>
-                  Ban chua co don hang nao
+                  Bạn chưa có đơn hàng nào
                 </div>
               ) : (
                 orders.map(order => (
@@ -209,7 +209,7 @@ export function ProfilePage() {
                       alignItems: 'center', marginBottom: 12
                     }}>
                       <div>
-                        <span style={{ fontWeight: 700 }}>Don #{order.orderCode}</span>
+                        <span style={{ fontWeight: 700 }}>Đơn #{order.orderCode}</span>
                         <span style={{ fontSize: 13, color: 'var(--muted)', marginLeft: 12 }}>
                           {new Date(order.createdAt).toLocaleDateString('vi-VN')}
                         </span>
@@ -241,13 +241,13 @@ export function ProfilePage() {
                       paddingTop: 12, borderTop: '1px solid var(--border)'
                     }}>
                       <span style={{ fontWeight: 800, color: 'var(--rose)' }}>
-                        Tong: {fmt(order.totalAmount)}
+                        Tổng: {fmt(order.totalAmount)}
                       </span>
                       {(order.status === 'Pending' || order.status === 'Confirmed') && (
                         <button className="btn btn-ghost"
                           style={{ fontSize: 12, color: 'red' }}
                           onClick={() => handleCancelOrder(order.id)}>
-                          Huy don
+                          Hủy đơn
                         </button>
                       )}
                     </div>

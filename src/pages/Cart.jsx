@@ -11,9 +11,9 @@ export default function CartPage() {
         display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Gio hang trong</div>
-          <div style={{ color: 'var(--muted)', marginBottom: 24 }}>Them san pham vao gio de tiep tuc</div>
-          <button className="btn btn-primary" onClick={() => navigate('home')}>Mua sam ngay</button>
+          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Giỏ hàng trống</div>
+          <div style={{ color: 'var(--muted)', marginBottom: 24 }}>Thêm sản phẩm vào giỏ để tiếp tục</div>
+          <button className="btn btn-primary" onClick={() => navigate('home')}>Mua sắm ngay</button>
         </div>
       </div>
     );
@@ -27,7 +27,7 @@ export default function CartPage() {
       <div style={{ background: 'var(--warm)', padding: '28px 0', marginBottom: 28 }}>
         <div className="container">
           <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 28 }}>
-            Gio hang ({cart.length} san pham)
+            Giỏ hàng ({cart.length} sản phẩm)
           </div>
         </div>
       </div>
@@ -42,13 +42,14 @@ export default function CartPage() {
           <table>
             <thead>
               <tr>
-                <th>San pham</th><th>Don gia</th>
-                <th>So luong</th><th>Thanh tien</th><th></th>
+                <th>Sản phẩm</th><th>Đơn giá</th>
+                <th>Số lượng</th><th>Thành tiền</th><th></th>
               </tr>
             </thead>
             <tbody>
               {cart.map(item => {
                 const price = item.salePrice || item.sale || item.price;
+                const imgSrc = item.img || '';
                 return (
                   <tr key={item.id}>
                     <td>
@@ -58,9 +59,13 @@ export default function CartPage() {
                         <div style={{
                           width: 48, height: 48, background: 'var(--warm)',
                           borderRadius: 8, display: 'flex', alignItems: 'center',
-                          justifyContent: 'center', fontSize: 24, flexShrink: 0
+                          justifyContent: 'center', fontSize: 24, flexShrink: 0, overflow: 'hidden'
                         }}>
-                          {item.img && !item.img.startsWith('/') ? item.img : (item.name?.charAt(0) || 'H')}
+                          {imgSrc && (imgSrc.startsWith('http') || imgSrc.startsWith('/')) ? (
+                            <img src={imgSrc} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ) : (
+                            <span>{item.name?.charAt(0) || 'H'}</span>
+                          )}
                         </div>
                         <div>
                           <div style={{ fontWeight: 700, fontSize: 14 }}>{item.name}</div>
@@ -69,7 +74,7 @@ export default function CartPage() {
                               background: '#fde8ee', color: 'var(--rose)',
                               padding: '1px 6px', borderRadius: 4,
                               fontSize: 11, fontWeight: 600
-                            }}>Giam gia</span>
+                            }}>Giảm giá</span>
                           )}
                         </div>
                       </div>
@@ -88,13 +93,8 @@ export default function CartPage() {
                     </td>
                     <td style={{ fontWeight: 800, fontSize: 15 }}>{fmt(price * item.qty)}</td>
                     <td>
-                      <button
-                        onClick={() => updateCart(item.id, 0)}
-                        style={{
-                          border: 'none', background: 'none',
-                          cursor: 'pointer', color: 'var(--rose)',
-                          fontSize: 18
-                        }}>
+                      <button onClick={() => updateCart(item.id, 0)}
+                        style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--rose)', fontSize: 18 }}>
                         X
                       </button>
                     </td>
@@ -110,7 +110,7 @@ export default function CartPage() {
           border: '1px solid var(--border)',
           padding: 24, position: 'sticky', top: 80
         }}>
-          <div style={{ fontWeight: 800, fontSize: 17, marginBottom: 20 }}>Tom tat don hang</div>
+          <div style={{ fontWeight: 800, fontSize: 17, marginBottom: 20 }}>Tóm tắt đơn hàng</div>
           {cart.map(i => (
             <div key={i.id} style={{
               display: 'flex', justifyContent: 'space-between',
@@ -127,20 +127,20 @@ export default function CartPage() {
             display: 'flex', justifyContent: 'space-between',
             marginBottom: 8, fontSize: 14, color: 'var(--muted)'
           }}>
-            <span>Tam tinh</span><span>{fmt(cartTotal)}</span>
+            <span>Tạm tính</span><span>{fmt(cartTotal)}</span>
           </div>
           <div style={{
             display: 'flex', justifyContent: 'space-between',
             marginBottom: 16, fontSize: 14, color: '#4a7c59'
           }}>
-            <span>Phi giao hang</span>
-            <span style={{ fontWeight: 700 }}>{shipping === 0 ? 'Mien phi' : fmt(shipping)}</span>
+            <span>Phí giao hàng</span>
+            <span style={{ fontWeight: 700 }}>{shipping === 0 ? 'Miễn phí' : fmt(shipping)}</span>
           </div>
           <div style={{
             display: 'flex', justifyContent: 'space-between',
             fontSize: 18, fontWeight: 800, color: 'var(--rose)', marginBottom: 20
           }}>
-            <span>Tong cong</span><span>{fmt(grandTotal)}</span>
+            <span>Tổng cộng</span><span>{fmt(grandTotal)}</span>
           </div>
           {cartTotal < 500000 && (
             <div style={{
@@ -148,18 +148,18 @@ export default function CartPage() {
               borderRadius: 10, padding: '10px 14px',
               fontSize: 13, marginBottom: 16
             }}>
-              Mua them {fmt(500000 - cartTotal)} de duoc mien phi ship!
+              Mua thêm {fmt(500000 - cartTotal)} để được miễn phí ship!
             </div>
           )}
           <button className="btn btn-primary"
             style={{ width: '100%', justifyContent: 'center', fontSize: 16, padding: '14px' }}
             onClick={() => navigate('checkout')}>
-            Dat hang
+            Đặt hàng
           </button>
           <button className="btn btn-ghost"
             style={{ width: '100%', justifyContent: 'center', marginTop: 10 }}
             onClick={() => navigate('home')}>
-            Tiep tuc mua sam
+            Tiếp tục mua sắm
           </button>
         </div>
       </div>

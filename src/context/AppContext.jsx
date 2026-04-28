@@ -65,7 +65,7 @@ export function AppProvider({ children }) {
       if (ex) return c.map(i => i.id === product.id ? { ...i, qty: i.qty + qty } : i);
       return [...c, { ...product, qty }];
     });
-    showToast('Da them vao gio hang');
+    showToast('Đã thêm vào giỏ hàng');
   };
 
   const updateCart = (id, qty) => {

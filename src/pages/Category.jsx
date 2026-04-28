@@ -18,10 +18,10 @@ export function CategoryPage() {
   const PER_PAGE = 12;
 
   const catId = pageParams.catId || null;
-  const catName = pageParams.catName || 'Tat ca san pham';
+  const catName = pageParams.catName || 'Tất cả sản phẩm';
 
   useEffect(() => {
-    categoryApi.getAll().then(res => setCategories(res.data)).catch(() => {});
+    categoryApi.getAll().then(res => setCategories(res.data)).catch(() => { });
   }, []);
 
   useEffect(() => {
@@ -34,11 +34,7 @@ export function CategoryPage() {
 
   const fetchProducts = () => {
     setLoading(true);
-    const params = {
-      page: currentPage,
-      pageSize: PER_PAGE,
-      sort: sort
-    };
+    const params = { page: currentPage, pageSize: PER_PAGE, sort: sort };
     if (catId) params.categoryId = catId;
     if (priceMin) params.minPrice = priceMin;
     if (priceMax) params.maxPrice = priceMax;
@@ -64,11 +60,11 @@ export function CategoryPage() {
       <div style={{ background: 'var(--warm)', padding: '28px 0', marginBottom: 28 }}>
         <div className="container">
           <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 4 }}>
-            <span style={{ cursor: 'pointer' }} onClick={() => navigate('home')}>Trang chu</span>
+            <span style={{ cursor: 'pointer' }} onClick={() => navigate('home')}>Trang chủ</span>
             {' > '}{catName}
           </div>
           <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 28 }}>{catName}</div>
-          <div style={{ fontSize: 14, color: 'var(--muted)', marginTop: 4 }}>{totalCount} san pham</div>
+          <div style={{ fontSize: 14, color: 'var(--muted)', marginTop: 4 }}>{totalCount} sản phẩm</div>
         </div>
       </div>
       <div className="container" style={{
@@ -80,26 +76,22 @@ export function CategoryPage() {
           border: '1px solid var(--border)',
           padding: 20, position: 'sticky', top: 80
         }}>
-          <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 16 }}>Bo loc</div>
-
+          <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 16 }}>Bộ lọc</div>
           <div style={{ marginBottom: 20 }}>
-            <div className="form-group"><label>Khoang gia</label></div>
+            <div className="form-group"><label>Khoảng giá</label></div>
             <div style={{ display: 'flex', gap: 8 }}>
-              <input
-                type="number" value={priceMin}
+              <input type="number" value={priceMin}
                 onChange={e => setPriceMin(e.target.value)}
-                placeholder="Tu" style={{ fontSize: 13 }} />
-              <input
-                type="number" value={priceMax}
+                placeholder="Từ" style={{ fontSize: 13 }} />
+              <input type="number" value={priceMax}
                 onChange={e => setPriceMax(e.target.value)}
-                placeholder="Den" style={{ fontSize: 13 }} />
+                placeholder="Đến" style={{ fontSize: 13 }} />
             </div>
           </div>
-
           <div>
-            <div className="form-group"><label>Danh muc</label></div>
+            <div className="form-group"><label>Danh mục</label></div>
             <div
-              onClick={() => navigate('category', { catId: null, catName: 'Tat ca san pham' })}
+              onClick={() => navigate('category', { catId: null, catName: 'Tất cả sản phẩm' })}
               style={{
                 padding: '8px 12px', borderRadius: 8, cursor: 'pointer',
                 fontSize: 14, marginBottom: 2,
@@ -107,11 +99,10 @@ export function CategoryPage() {
                 color: !catId ? 'var(--rose)' : 'var(--text)',
                 fontWeight: !catId ? 700 : 400
               }}>
-              Tat ca
+              Tất cả
             </div>
             {categories.map(c => (
-              <div
-                key={c.id}
+              <div key={c.id}
                 onClick={() => navigate('category', { catId: c.id, catName: c.name })}
                 style={{
                   padding: '8px 12px', borderRadius: 8, cursor: 'pointer',
@@ -128,15 +119,14 @@ export function CategoryPage() {
 
         <div>
           <div style={{ display: 'flex', gap: 8, marginBottom: 20, alignItems: 'center', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 13, color: 'var(--muted)' }}>Sap xep:</span>
+            <span style={{ fontSize: 13, color: 'var(--muted)' }}>Sắp xếp:</span>
             {[
-              ['newest', 'Moi nhat'],
-              ['price_asc', 'Gia tang'],
-              ['price_desc', 'Gia giam'],
-              ['sold', 'Ban chay']
+              ['newest', 'Mới nhất'],
+              ['price_asc', 'Giá tăng'],
+              ['price_desc', 'Giá giảm'],
+              ['sold', 'Bán chạy']
             ].map(([v, l]) => (
-              <button
-                key={v}
+              <button key={v}
                 onClick={() => { setSort(v); setCurrentPage(1); }}
                 style={{
                   background: sort === v ? 'var(--rose)' : 'var(--warm)',
@@ -151,10 +141,10 @@ export function CategoryPage() {
           </div>
 
           {loading ? (
-            <div style={{ textAlign: 'center', padding: 60, color: 'var(--muted)' }}>Dang tai...</div>
+            <div style={{ textAlign: 'center', padding: 60, color: 'var(--muted)' }}>Đang tải...</div>
           ) : products.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 60, color: 'var(--muted)' }}>
-              Khong tim thay san pham phu hop
+              Không tìm thấy sản phẩm phù hợp
             </div>
           ) : (
             <div className="grid-4">
@@ -165,8 +155,7 @@ export function CategoryPage() {
           {totalPages > 1 && (
             <div className="pagination">
               {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
+                <button key={i}
                   className={`page-btn${currentPage === i + 1 ? ' active' : ''}`}
                   onClick={() => setCurrentPage(i + 1)}>
                   {i + 1}
