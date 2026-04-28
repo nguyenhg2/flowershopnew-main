@@ -1,0 +1,12 @@
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\bin\Debug\net8.0\FlowerShop.DTO.deps.json
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\bin\Debug\net8.0\FlowerShop.DTO.dll
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\bin\Debug\net8.0\FlowerShop.DTO.pdb
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\obj\Debug\net8.0\FlowerShop.DTO.GeneratedMSBuildEditorConfig.editorconfig
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\obj\Debug\net8.0\FlowerShop.DTO.AssemblyInfoInputs.cache
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\obj\Debug\net8.0\FlowerShop.DTO.AssemblyInfo.cs
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\obj\Debug\net8.0\FlowerShop.DTO.csproj.CoreCompileInputs.cache
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\obj\Debug\net8.0\FlowerShop.DTO.sourcelink.json
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\obj\Debug\net8.0\FlowerShop.DTO.dll
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\obj\Debug\net8.0\refint\FlowerShop.DTO.dll
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\obj\Debug\net8.0\FlowerShop.DTO.pdb
+D:\User\Downloads\flowershop-main\FlowerShop\backend\FlowerShop.DTO\obj\Debug\net8.0\ref\FlowerShop.DTO.dll
