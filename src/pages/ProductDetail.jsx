@@ -141,11 +141,15 @@ export function ProductDetailPage() {
             justifyContent: 'center', overflow: 'hidden'
           }}>
             {product.imageUrl && product.imageUrl.startsWith('/') ? (
-              <div style={{ fontSize: 120, color: '#c84b6b' }}>
+              <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+            ) : null}
+            {(!product.imageUrl || !product.imageUrl.startsWith('/')) && (
+              <span style={{ fontSize: 120 }}>{product.imageUrl || ''}</span>
+            )}
+            {(product.imageUrl && product.imageUrl.startsWith('/')) && (
+              <div style={{ display: 'none', fontSize: 120, color: '#c84b6b', alignItems: 'center', justifyContent: 'center' }}>
                 {product.name?.charAt(0) || 'H'}
               </div>
-            ) : (
-              <span style={{ fontSize: 120 }}>{product.imageUrl || ''}</span>
             )}
           </div>
 
