@@ -1,17 +1,9 @@
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState } from 'react';
 import { AppContext } from '../context/AppContext';
-import categoryApi from '../api/categoryApi';
 
 export default function Header() {
   const { navigate, cartCount, user, setShowLogin, setUser, showToast, isAdmin } = useContext(AppContext);
   const [search, setSearch] = useState('');
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    categoryApi.getAll()
-      .then(res => setCategories(res.data))
-      .catch(() => {});
-  }, []);
 
   const doSearch = (e) => {
     e.preventDefault();
@@ -39,15 +31,24 @@ export default function Header() {
             Mong Lan
           </div>
           <nav style={{ display: 'flex', gap: 4, flex: 1 }}>
-            {categories.slice(0, 4).map(c => (
-              <button
-                key={c.id}
-                className="btn btn-ghost"
-                style={{ fontSize: 13 }}
-                onClick={() => navigate('category', { catId: c.id, catName: c.name })}>
-                {c.name}
-              </button>
-            ))}
+            <button
+              className="btn btn-ghost"
+              style={{ fontSize: 13 }}
+              onClick={() => navigate('contact')}>
+              Lien he
+            </button>
+            <button
+              className="btn btn-ghost"
+              style={{ fontSize: 13 }}
+              onClick={() => showToast('Chuc nang danh gia dang duoc phat trien')}>
+              Danh gia
+            </button>
+            <button
+              className="btn btn-ghost"
+              style={{ fontSize: 13 }}
+              onClick={() => navigate('category', { catId: 1, catName: 'Tat ca' })}>
+              Tat ca san pham
+            </button>
           </nav>
           <form onSubmit={doSearch} style={{ display: 'flex', gap: 0, maxWidth: 240 }}>
             <input
