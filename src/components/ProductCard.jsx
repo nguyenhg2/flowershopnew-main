@@ -52,15 +52,15 @@ export default function ProductCard({ p }) {
         overflow: 'hidden'
       }}>
         {(p.img || p.imageUrl) && (p.img || p.imageUrl).startsWith('/') ? (
-          <div style={{
-            width: '100%', height: '100%',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: '#f0e6f0', fontSize: 48, color: '#c84b6b'
-          }}>
+          <img src={p.img || p.imageUrl} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+        ) : null}
+        {(!(p.img || p.imageUrl) || !(p.img || p.imageUrl).startsWith('/')) && (
+          <span style={{ fontSize: 64 }}>{p.img || p.imageUrl || ''}</span>
+        )}
+        {((p.img || p.imageUrl) && (p.img || p.imageUrl).startsWith('/')) && (
+          <div style={{ display: 'none', width: '100%', height: '100%', background: '#f0e6f0', fontSize: 48, color: '#c84b6b', alignItems: 'center', justifyContent: 'center' }}>
             {p.name?.charAt(0) || 'H'}
           </div>
-        ) : (
-          <span style={{ fontSize: 64 }}>{p.img || p.imageUrl || ''}</span>
         )}
         {displayPrice && (
           <span style={{
