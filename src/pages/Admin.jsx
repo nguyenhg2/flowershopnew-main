@@ -417,7 +417,7 @@ export function AdminPage() {
                         )}
                         {order.status === 'Delivered' && (
                           <button className="btn btn-outline" style={{ fontSize: 12 }}
-                            onClick={() => updateOrderStatus(order.id, 'Completed)}>Hoan thanh</button>
+                            onClick={() => updateOrderStatus(order.id, 'Completed')}>Hoan thanh</button>
                         )}
                       </div>
                     </div>
