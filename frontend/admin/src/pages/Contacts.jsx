@@ -4,23 +4,24 @@ import { contactApi } from '../services/api';
 const Contacts = () => {
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [keyword, setKeyword] = useState('');
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const pageSize = 20;
 
     useEffect(() => { load(); }, [page]);
 
-    const load = () => {
+    const load = (p = page) => {
         setLoading(true);
-        contactApi.getAll({ page, pageSize })
-            .then(res => {
-                const d = res.data;
-                setContacts(d.items || []);
-                setTotalCount(d.totalCount || 0);
-            })
+        const params = { page: p, pageSize };
+        if (keyword) params.keyword = keyword;
+        contactApi.getAll(params)
+            .then(res => { setContacts(res.data.items || []); setTotalCount(res.data.totalCount || 0); })
             .catch(() => { setContacts([]); setTotalCount(0); })
             .finally(() => setLoading(false));
     };
+
+    const handleSearch = () => { setPage(1); load(1); };
 
     const markRead = async (id) => {
         try { await contactApi.markRead(id); load(); } catch { }
@@ -37,6 +38,15 @@ const Contacts = () => {
         <div>
             <div className="content-header"><h1>Quan ly lien he ({totalCount})</h1></div>
             <div className="card">
+                <div className="card-header">
+                    <div className="input-group" style={{ maxWidth: 400 }}>
+                        <input className="form-control" value={keyword} onChange={e => setKeyword(e.target.value)}
+                            placeholder="Tim theo ten, email, SDT..." onKeyDown={e => e.key === 'Enter' && handleSearch()} />
+                        <div className="input-group-append">
+                            <button className="btn btn-primary" onClick={handleSearch}>Tim</button>
+                        </div>
+                    </div>
+                </div>
                 <div className="card-body table-responsive p-0">
                     {loading ? (
                         <div className="text-center p-4"><div className="spinner-border text-primary"></div></div>
@@ -54,8 +64,8 @@ const Contacts = () => {
                                         <td><span className={`badge ${c.isRead ? 'badge-secondary' : 'badge-warning'}`}>{c.isRead ? 'Da doc' : 'Chua doc'}</span></td>
                                         <td>{new Date(c.createdAt).toLocaleDateString('vi-VN')}</td>
                                         <td>
-                                            {!c.isRead && <button className="btn btn-sm btn-info mr-1" onClick={() => markRead(c.id)}><i className="fas fa-check"></i> Da doc</button>}
-                                            <button className="btn btn-sm btn-danger" onClick={() => remove(c.id)}><i className="fas fa-trash"></i> Xoa</button>
+                                            {!c.isRead && <button className="btn btn-sm btn-info mr-1" onClick={() => markRead(c.id)}><i className="fas fa-check"></i></button>}
+                                            <button className="btn btn-sm btn-danger" onClick={() => remove(c.id)}><i className="fas fa-trash"></i></button>
                                         </td>
                                     </tr>
                                 ))}

@@ -4,16 +4,12 @@ const API_BASE_URL = 'http://localhost:5000/api';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
 });
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('admin_token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
 });
 
@@ -53,6 +49,8 @@ export const orderApi = {
     getAll: (params) => api.get('/orders/all', { params }),
     getById: (id) => api.get(`/orders/${id}`),
     updateStatus: (id, status) => api.put(`/orders/${id}/status`, { status }),
+    getRevenue: (params) => api.get('/orders/revenue', { params }),
+    getInvoice: (id) => api.get(`/orders/${id}/invoice`),
 };
 
 export const bannerApi = {
@@ -75,6 +73,9 @@ export const contactApi = {
 
 export const userApi = {
     getAll: (params) => api.get('/users', { params }),
+    create: (data) => api.post('/users', data),
+    update: (id, data) => api.put(`/users/${id}`, data),
+    remove: (id) => api.delete(`/users/${id}`),
     toggle: (id) => api.put(`/users/${id}/toggle`),
 };
 

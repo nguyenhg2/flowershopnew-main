@@ -28,10 +28,23 @@ namespace FlowerShop.API.Controllers
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll(
+            [FromQuery] string? keyword,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20)
         {
-            var query = _context.Contacts.OrderByDescending(c => c.CreatedAt);
+            var query = _context.Contacts.AsQueryable();
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                var kw = keyword.ToLower();
+                query = query.Where(c =>
+                    c.FullName.ToLower().Contains(kw) ||
+                    c.Email.ToLower().Contains(kw) ||
+                    c.Phone.Contains(kw) ||
+                    c.Message.ToLower().Contains(kw));
+            }
+
+            query = query.OrderByDescending(c => c.CreatedAt);
             var totalCount = await query.CountAsync();
             var items = await query
                 .Skip((page - 1) * pageSize)

@@ -31,10 +31,22 @@ namespace FlowerShop.API.Controllers
         [HttpGet("all")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll(
+            [FromQuery] string? keyword,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20)
         {
             var all = await _reviewRepository.GetAllAsync();
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                var kw = keyword.ToLower();
+                all = all.Where(r =>
+                    (r.User?.FullName ?? "").ToLower().Contains(kw) ||
+                    (r.Product?.Name ?? "").ToLower().Contains(kw) ||
+                    (r.Comment ?? "").ToLower().Contains(kw)
+                ).ToList();
+            }
+
             var totalCount = all.Count;
             var items = all
                 .Skip((page - 1) * pageSize)
