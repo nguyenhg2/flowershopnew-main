@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fovEF2fWyuw=",
+  "dgSpecHash": "RddwQ4k7FSY=",
   "success": true,
-  "projectFilePath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\FlowerShop\\backend\\FlowerShop.Repository\\FlowerShop.Repository.csproj",
+  "projectFilePath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\backend\\FlowerShop.Repository\\FlowerShop.Repository.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\thanh\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\thanh\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

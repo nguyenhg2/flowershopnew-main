@@ -141,7 +141,7 @@ export function ProductDetailPage() {
             height: 400, display: 'flex', alignItems: 'center',
             justifyContent: 'center', overflow: 'hidden'
           }}>
-            {imgSrc && (imgSrc.startsWith('http') || imgSrc.startsWith('/')) ? (
+            {imgSrc ? (
               <img src={imgSrc} alt={product.name}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 onError={(e) => { e.target.style.display = 'none'; }} />

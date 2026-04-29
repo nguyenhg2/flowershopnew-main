@@ -61,7 +61,7 @@ export default function CartPage() {
                           borderRadius: 8, display: 'flex', alignItems: 'center',
                           justifyContent: 'center', fontSize: 24, flexShrink: 0, overflow: 'hidden'
                         }}>
-                          {imgSrc && (imgSrc.startsWith('http') || imgSrc.startsWith('/')) ? (
+                          {imgSrc ? (
                             <img src={imgSrc} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                           ) : (
                             <span>{item.name?.charAt(0) || 'H'}</span>

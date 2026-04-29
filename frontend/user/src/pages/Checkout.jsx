@@ -21,7 +21,8 @@ export function CheckoutPage() {
   const validate = () => {
     const e = {};
     if (!form.name.trim()) e.name = 'Vui lòng nhập tên người nhận';
-    if (!/^(0|\+84)\d{9}$/.test(form.phone)) e.phone = 'Số điện thoại không hợp lệ';
+    const phoneStr = form.phone.replace(/\s+/g, '');
+    if (!/^(0|\+84)\d{9}$/.test(phoneStr)) e.phone = 'Số điện thoại không hợp lệ';
     if (!form.address.trim()) e.address = 'Vui lòng nhập địa chỉ giao hàng';
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -215,7 +216,7 @@ export function CheckoutPage() {
                   borderRadius: 8, display: 'flex', alignItems: 'center',
                   justifyContent: 'center', flexShrink: 0, fontSize: 18, overflow: 'hidden'
                 }}>
-                  {imgSrc && (imgSrc.startsWith('http') || imgSrc.startsWith('/')) ? (
+                  {imgSrc ? (
                     <img src={imgSrc} alt={i.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <span>{i.name?.charAt(0) || 'H'}</span>

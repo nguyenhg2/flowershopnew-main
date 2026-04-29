@@ -3863,11 +3863,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\User\\Downloads\\Code\\flowershopnew-main\\FlowerShop\\backend\\FlowerShop.Repository\\FlowerShop.Repository.csproj",
+      "projectUniqueName": "D:\\User\\Downloads\\Code\\flowershopnew-main\\backend\\FlowerShop.Repository\\FlowerShop.Repository.csproj",
       "projectName": "FlowerShop.Repository",
-      "projectPath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\FlowerShop\\backend\\FlowerShop.Repository\\FlowerShop.Repository.csproj",
+      "projectPath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\backend\\FlowerShop.Repository\\FlowerShop.Repository.csproj",
       "packagesPath": "C:\\Users\\thanh\\.nuget\\packages\\",
-      "outputPath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\FlowerShop\\backend\\FlowerShop.Repository\\obj\\",
+      "outputPath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\backend\\FlowerShop.Repository\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3888,11 +3888,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\User\\Downloads\\Code\\flowershopnew-main\\FlowerShop\\backend\\FlowerShop.Common\\FlowerShop.Common.csproj": {
-              "projectPath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\FlowerShop\\backend\\FlowerShop.Common\\FlowerShop.Common.csproj"
+            "D:\\User\\Downloads\\Code\\flowershopnew-main\\backend\\FlowerShop.Common\\FlowerShop.Common.csproj": {
+              "projectPath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\backend\\FlowerShop.Common\\FlowerShop.Common.csproj"
             },
-            "D:\\User\\Downloads\\Code\\flowershopnew-main\\FlowerShop\\backend\\FlowerShop.Entities\\FlowerShop.Entities.csproj": {
-              "projectPath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\FlowerShop\\backend\\FlowerShop.Entities\\FlowerShop.Entities.csproj"
+            "D:\\User\\Downloads\\Code\\flowershopnew-main\\backend\\FlowerShop.Entities\\FlowerShop.Entities.csproj": {
+              "projectPath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\backend\\FlowerShop.Entities\\FlowerShop.Entities.csproj"
             }
           }
         }

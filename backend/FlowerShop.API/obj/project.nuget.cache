@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "aDTdU/laddo=",
+  "dgSpecHash": "iZx5S9e89tM=",
   "success": true,
-  "projectFilePath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\FlowerShop\\backend\\FlowerShop.API\\FlowerShop.API.csproj",
+  "projectFilePath": "D:\\User\\Downloads\\Code\\flowershopnew-main\\backend\\FlowerShop.API\\FlowerShop.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\thanh\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\thanh\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
