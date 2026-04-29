@@ -17,14 +17,14 @@ namespace FlowerShop.Entities
         public decimal TotalAmount { get; set; }
         public string Status { get; set; } = "Pending";
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? DeliveredAt { get; set; }
         public List<OrderDetail> OrderDetails { get; set; } = new();
     }
 
     public static class OrderStatus
     {
         public const string Pending = "Pending";
-        public const string Confirmed = "Confirmed";
-        public const string Processing = "Processing";
+        public const string Preparing = "Preparing";
         public const string Shipping = "Shipping";
         public const string Delivered = "Delivered";
         public const string Completed = "Completed";

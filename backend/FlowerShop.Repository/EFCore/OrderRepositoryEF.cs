@@ -40,6 +40,23 @@ namespace FlowerShop.Repository.EFCore
             return (items, totalCount);
         }
 
+        public async Task<(List<Order> Items, int TotalCount)> GetByStatusPagedAsync(string status, int page, int pageSize)
+        {
+            var query = _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
+                .Where(o => o.Status == status)
+                .OrderByDescending(o => o.CreatedAt);
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
+
         public async Task<List<Order>> GetByUserAsync(int userId)
         {
             return await _context.Orders

@@ -50,7 +50,7 @@ export const categoryApi = {
 };
 
 export const orderApi = {
-    getAll: (status) => api.get('/orders/all', { params: status ? { status } : {} }),
+    getAll: (params) => api.get('/orders/all', { params }),
     getById: (id) => api.get(`/orders/${id}`),
     updateStatus: (id, status) => api.put(`/orders/${id}/status`, { status }),
 };
@@ -63,12 +63,12 @@ export const bannerApi = {
 };
 
 export const reviewApi = {
-    getAll: () => api.get('/reviews/all'),
+    getAll: (params) => api.get('/reviews/all', { params }),
     remove: (id) => api.delete(`/reviews/${id}`),
 };
 
 export const contactApi = {
-    getAll: () => api.get('/contacts'),
+    getAll: (params) => api.get('/contacts', { params }),
     markRead: (id) => api.put(`/contacts/${id}/read`),
     remove: (id) => api.delete(`/contacts/${id}`),
 };

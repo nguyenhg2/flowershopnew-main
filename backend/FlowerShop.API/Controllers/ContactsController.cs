@@ -27,10 +27,25 @@ namespace FlowerShop.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20)
         {
-            var contacts = await _context.Contacts.OrderByDescending(c => c.CreatedAt).ToListAsync();
-            return Ok(contacts);
+            var query = _context.Contacts.OrderByDescending(c => c.CreatedAt);
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                items,
+                totalCount,
+                page,
+                pageSize,
+                totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+            });
         }
 
         [HttpPut("{id}/read")]

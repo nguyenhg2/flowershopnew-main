@@ -1,13 +1,23 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AppContext } from '../context/AppContext';
 
 const fmt = (n) => {
   if (n === null || n === undefined) return '';
-  return n.toLocaleString('vi-VN') + 'd';
+  return n.toLocaleString('vi-VN') + 'đ';
 };
+
+const placeholderColors = [
+  'linear-gradient(135deg,#f8bbd0,#f48fb1)',
+  'linear-gradient(135deg,#ce93d8,#ba68c8)',
+  'linear-gradient(135deg,#ef9a9a,#e57373)',
+  'linear-gradient(135deg,#ffcc80,#ffb74d)',
+  'linear-gradient(135deg,#a5d6a7,#81c784)',
+  'linear-gradient(135deg,#80cbc4,#4db6ac)',
+];
 
 export default function ProductCard({ p }) {
   const { navigate, addToCart } = useContext(AppContext);
+  const [imgError, setImgError] = useState(false);
 
   const handleAdd = (e) => {
     e.stopPropagation();
@@ -23,6 +33,8 @@ export default function ProductCard({ p }) {
   const displayPrice = p.salePrice || p.sale || null;
   const originalPrice = p.price;
   const imgSrc = p.img || p.imageUrl || '';
+  const showImg = imgSrc && !imgError;
+  const bgGradient = placeholderColors[(p.id || 0) % placeholderColors.length];
 
   return (
     <div
@@ -33,7 +45,9 @@ export default function ProductCard({ p }) {
         border: '1px solid var(--border)',
         overflow: 'hidden',
         cursor: 'pointer',
-        transition: 'transform .2s, box-shadow .2s'
+        transition: 'transform .2s, box-shadow .2s',
+        display: 'flex',
+        flexDirection: 'column'
       }}
       onMouseEnter={e => {
         e.currentTarget.style.transform = 'translateY(-4px)';
@@ -44,51 +58,76 @@ export default function ProductCard({ p }) {
         e.currentTarget.style.boxShadow = '';
       }}>
       <div style={{
-        background: 'var(--warm)',
-        height: 180,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         position: 'relative',
+        paddingTop: '100%',
+        background: showImg ? 'var(--warm)' : bgGradient,
         overflow: 'hidden'
       }}>
-        {imgSrc ? (
-          <img src={imgSrc} alt={p.name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            onError={(e) => { e.target.style.display = 'none'; }} />
+        {showImg ? (
+          <img
+            src={imgSrc}
+            alt={p.name}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
+            }}
+            onError={() => setImgError(true)}
+          />
         ) : (
-          <span style={{ fontSize: 64, color: '#c84b6b' }}>{p.name?.charAt(0) || 'H'}</span>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff'
+          }}>
+            <span style={{ fontSize: 48, marginBottom: 4 }}>
+              {p.name?.charAt(0) || 'H'}
+            </span>
+            <span style={{ fontSize: 12, opacity: .8, padding: '0 12px', textAlign: 'center', lineHeight: 1.3 }}>
+              {p.name}
+            </span>
+          </div>
         )}
         {displayPrice && (
           <span style={{
-            position: 'absolute', top: 8, left: 8,
+            position: 'absolute', top: 10, left: 10,
             background: 'var(--rose)', color: '#fff',
-            padding: '2px 8px', borderRadius: 8,
-            fontSize: 11, fontWeight: 700
+            padding: '3px 10px', borderRadius: 8,
+            fontSize: 12, fontWeight: 700
           }}>
             -{Math.round((1 - displayPrice / originalPrice) * 100)}%
           </span>
         )}
         {p.isNew && (
           <span style={{
-            position: 'absolute', top: 8, right: 8,
+            position: 'absolute', top: 10, right: 10,
             background: '#4a7c59', color: '#fff',
-            padding: '2px 8px', borderRadius: 8,
-            fontSize: 11, fontWeight: 700
+            padding: '3px 10px', borderRadius: 8,
+            fontSize: 12, fontWeight: 700
           }}>MỚI</span>
         )}
       </div>
-      <div style={{ padding: '14px 16px' }}>
+      <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
         <div style={{
-          fontWeight: 700, fontSize: 14, marginBottom: 6,
-          lineHeight: 1.3, minHeight: 36,
+          fontWeight: 700, fontSize: 14, marginBottom: 8,
+          lineHeight: 1.4, minHeight: 40,
           overflow: 'hidden', textOverflow: 'ellipsis',
           display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical'
         }}>
           {p.name}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-          <span style={{ color: 'var(--rose)', fontWeight: 800, fontSize: 15 }}>
+          <span style={{ color: 'var(--rose)', fontWeight: 800, fontSize: 16 }}>
             {fmt(displayPrice || originalPrice)}
           </span>
           {displayPrice && (
@@ -101,13 +140,13 @@ export default function ProductCard({ p }) {
           )}
         </div>
         {(p.sold !== undefined || p.soldCount !== undefined) && (
-          <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 8 }}>
+          <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 10 }}>
             Đã bán: {p.sold || p.soldCount || 0}
           </div>
         )}
         <button
           className="btn btn-primary"
-          style={{ width: '100%', justifyContent: 'center', fontSize: 13 }}
+          style={{ width: '100%', justifyContent: 'center', fontSize: 13, marginTop: 'auto' }}
           onClick={handleAdd}>
           Thêm vào giỏ
         </button>

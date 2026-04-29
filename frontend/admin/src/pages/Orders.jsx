@@ -4,41 +4,70 @@ import { orderApi } from '../services/api';
 const fmt = (n) => n != null ? n.toLocaleString('vi-VN') + 'd' : '';
 
 const statusMap = {
-    Pending: 'Chờ xử lý', Confirmed: 'Đã xác nhận', Processing: 'Đang xử lý',
-    Shipping: 'Đang vận chuyển', Delivered: 'Đã giao', Completed: 'Hoàn thành', Cancelled: 'Đã hủy'
+    Pending: 'Cho xu ly',
+    Preparing: 'Dang chuan bi hang',
+    Shipping: 'Dang van chuyen',
+    Delivered: 'Da giao',
+    Completed: 'Hoan thanh',
+    Cancelled: 'Da huy'
 };
 
 const statusBadge = {
-    Pending: 'badge-warning', Confirmed: 'badge-info', Processing: 'badge-primary',
-    Shipping: 'badge-secondary', Delivered: 'badge-success', Completed: 'badge-success', Cancelled: 'badge-danger'
+    Pending: 'badge-warning',
+    Preparing: 'badge-info',
+    Shipping: 'badge-primary',
+    Delivered: 'badge-success',
+    Completed: 'badge-success',
+    Cancelled: 'badge-danger'
+};
+
+const statusFlow = {
+    Pending: ['Preparing', 'Cancelled'],
+    Preparing: ['Shipping', 'Cancelled'],
+    Shipping: ['Delivered'],
+    Delivered: [],
+    Completed: [],
+    Cancelled: []
 };
 
 const Orders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [filterStatus, setFilterStatus] = useState('');
+    const [page, setPage] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const pageSize = 20;
 
-    useEffect(() => { load(); }, [filterStatus]);
+    useEffect(() => { setPage(1); }, [filterStatus]);
+    useEffect(() => { load(); }, [filterStatus, page]);
 
     const load = () => {
         setLoading(true);
-        orderApi.getAll(filterStatus || undefined)
-            .then(res => setOrders(res.data || []))
-            .catch(() => setOrders([]))
+        const params = { page, pageSize };
+        if (filterStatus) params.status = filterStatus;
+        orderApi.getAll(params)
+            .then(res => {
+                const d = res.data;
+                setOrders(d.items || []);
+                setTotalCount(d.totalCount || 0);
+            })
+            .catch(() => { setOrders([]); setTotalCount(0); })
             .finally(() => setLoading(false));
     };
 
     const updateStatus = async (id, status) => {
-        try { await orderApi.updateStatus(id, status); load(); } catch { /* bo qua */ }
+        try { await orderApi.updateStatus(id, status); load(); } catch { }
     };
+
+    const totalPages = Math.ceil(totalCount / pageSize);
 
     return (
         <div>
-            <div className="content-header"><h1>Quản lý đơn hàng ({orders.length})</h1></div>
+            <div className="content-header"><h1>Quan ly don hang ({totalCount})</h1></div>
             <div className="card">
                 <div className="card-header">
                     <select className="form-control" style={{ maxWidth: 200 }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
-                        <option value="">Tất cả trạng thái</option>
+                        <option value="">Tat ca trang thai</option>
                         {Object.keys(statusMap).map(k => <option key={k} value={k}>{statusMap[k]}</option>)}
                     </select>
                 </div>
@@ -46,17 +75,17 @@ const Orders = () => {
                     {loading ? (
                         <div className="text-center p-4"><div className="spinner-border text-primary"></div></div>
                     ) : orders.length === 0 ? (
-                        <p className="text-muted text-center p-4">Không có đơn hàng</p>
+                        <p className="text-muted text-center p-4">Khong co don hang</p>
                     ) : (
                         orders.map(order => (
                             <div key={order.id} className="card mb-3">
                                 <div className="card-header d-flex justify-content-between align-items-center">
                                     <div>
-                                        <strong>Đơn #{order.orderCode}</strong>
+                                        <strong>Don #{order.orderCode}</strong>
                                         <small className="text-muted ml-2">{new Date(order.createdAt).toLocaleDateString('vi-VN')}</small>
                                         <br />
                                         <small className="text-muted">
-                                            KH: {order.user?.fullName || '-'} | SĐT: {order.receiverPhone} | Địa chỉ: {order.shippingAddress}
+                                            KH: {order.user?.fullName || '-'} | SDT: {order.receiverPhone} | Dia chi: {order.shippingAddress}
                                         </small>
                                     </div>
                                     <span className={`badge ${statusBadge[order.status] || 'badge-secondary'}`}>{statusMap[order.status] || order.status}</span>
@@ -75,24 +104,37 @@ const Orders = () => {
                                     </table>
                                 </div>
                                 <div className="card-footer d-flex justify-content-between align-items-center">
-                                    <strong className="text-danger">Tổng: {fmt(order.totalAmount)}</strong>
+                                    <strong className="text-danger">Tong: {fmt(order.totalAmount)}</strong>
                                     <div>
-                                        {order.status === 'Pending' && (
-                                            <>
-                                                <button className="btn btn-sm btn-success mr-1" onClick={() => updateStatus(order.id, 'Confirmed')}>Xác nhận</button>
-                                                <button className="btn btn-sm btn-danger" onClick={() => updateStatus(order.id, 'Cancelled')}>Hủy</button>
-                                            </>
+                                        {(statusFlow[order.status] || []).length > 0 && (
+                                            <select
+                                                className="form-control form-control-sm d-inline-block"
+                                                style={{ width: 'auto' }}
+                                                defaultValue=""
+                                                onChange={e => { if (e.target.value) updateStatus(order.id, e.target.value); }}
+                                            >
+                                                <option value="" disabled>Chuyen trang thai</option>
+                                                {statusFlow[order.status].map(s => (
+                                                    <option key={s} value={s}>{statusMap[s]}</option>
+                                                ))}
+                                            </select>
                                         )}
-                                        {order.status === 'Confirmed' && <button className="btn btn-sm btn-primary" onClick={() => updateStatus(order.id, 'Processing')}>Bắt đầu xử lý</button>}
-                                        {order.status === 'Processing' && <button className="btn btn-sm btn-info" onClick={() => updateStatus(order.id, 'Shipping')}>Đang vận chuyển</button>}
-                                        {order.status === 'Shipping' && <button className="btn btn-sm btn-success" onClick={() => updateStatus(order.id, 'Delivered')}>Đã giao</button>}
-                                        {order.status === 'Delivered' && <button className="btn btn-sm btn-success" onClick={() => updateStatus(order.id, 'Completed')}>Hoàn thành</button>}
                                     </div>
                                 </div>
                             </div>
                         ))
                     )}
                 </div>
+                {totalPages > 1 && (
+                    <div className="card-footer d-flex justify-content-between align-items-center">
+                        <span>Tong: {totalCount} don hang</span>
+                        <div>
+                            <button className="btn btn-sm btn-outline-secondary mr-1" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>Truoc</button>
+                            <span className="mx-2">Trang {page}/{totalPages}</span>
+                            <button className="btn btn-sm btn-outline-secondary ml-1" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>Sau</button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

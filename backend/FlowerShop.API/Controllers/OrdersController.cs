@@ -40,7 +40,6 @@ namespace FlowerShop.API.Controllers
         {
             var userId = GetUserId();
             if (userId == 0) return Unauthorized();
-
             var orders = await _orderRepository.GetByUserAsync(userId);
             return Ok(orders);
         }
@@ -52,13 +51,30 @@ namespace FlowerShop.API.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20)
         {
+            List<Order> items;
+            int totalCount;
+
             if (!string.IsNullOrEmpty(status))
             {
-                var filtered = await _orderRepository.GetByStatusAsync(status);
-                return Ok(filtered);
+                var result = await _orderRepository.GetByStatusPagedAsync(status, page, pageSize);
+                items = result.Items;
+                totalCount = result.TotalCount;
             }
-            var orders = await _orderRepository.GetAllPagedAsync(page, pageSize);
-            return Ok(orders);
+            else
+            {
+                var result = await _orderRepository.GetAllPagedAsync(page, pageSize);
+                items = result.Items;
+                totalCount = result.TotalCount;
+            }
+
+            return Ok(new
+            {
+                items,
+                totalCount,
+                page,
+                pageSize,
+                totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+            });
         }
 
         [HttpGet("{id}")]
@@ -145,11 +161,32 @@ namespace FlowerShop.API.Controllers
             if (order == null)
                 return NotFound(new { message = "Khong tim thay don hang" });
 
-            var validStatuses = new[] { "Pending", "Confirmed", "Processing", "Shipping", "Delivered", "Completed", "Cancelled" };
+            var validStatuses = new[] { "Pending", "Preparing", "Shipping", "Delivered", "Completed", "Cancelled" };
             if (!validStatuses.Contains(dto.Status))
                 return BadRequest(new { message = "Trang thai khong hop le" });
 
             order.Status = dto.Status;
+            if (dto.Status == "Delivered")
+                order.DeliveredAt = DateTime.Now;
+            await _orderRepository.UpdateAsync(order);
+            return Ok(order);
+        }
+
+        [HttpPut("{id}/confirm")]
+        public async Task<IActionResult> ConfirmReceived(int id)
+        {
+            var order = await _orderRepository.GetByIdAsync(id);
+            if (order == null)
+                return NotFound(new { message = "Khong tim thay don hang" });
+
+            var userId = GetUserId();
+            if (order.UserId != userId)
+                return Forbid();
+
+            if (order.Status != "Delivered")
+                return BadRequest(new { message = "Chi xac nhan don hang da giao" });
+
+            order.Status = "Completed";
             await _orderRepository.UpdateAsync(order);
             return Ok(order);
         }
@@ -165,7 +202,8 @@ namespace FlowerShop.API.Controllers
             if (order.UserId != userId && !IsAdmin())
                 return Forbid();
 
-            if (order.Status == "Completed" || order.Status == "Cancelled")
+            if (order.Status == "Completed" || order.Status == "Cancelled"
+                || order.Status == "Shipping" || order.Status == "Delivered")
                 return BadRequest(new { message = "Khong the huy don hang nay" });
 
             var details = await _orderDetailRepository.GetByOrderAsync(id);

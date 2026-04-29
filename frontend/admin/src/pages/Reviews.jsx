@@ -4,29 +4,41 @@ import { reviewApi } from '../services/api';
 const Reviews = () => {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const pageSize = 20;
 
-    useEffect(() => { load(); }, []);
+    useEffect(() => { load(); }, [page]);
 
     const load = () => {
         setLoading(true);
-        reviewApi.getAll().then(res => setReviews(res.data || [])).catch(() => setReviews([])).finally(() => setLoading(false));
+        reviewApi.getAll({ page, pageSize })
+            .then(res => {
+                const d = res.data;
+                setReviews(d.items || []);
+                setTotalCount(d.totalCount || 0);
+            })
+            .catch(() => { setReviews([]); setTotalCount(0); })
+            .finally(() => setLoading(false));
     };
 
     const remove = async (id) => {
-        if (!window.confirm('Xác nhận xóa đánh giá này?')) return;
-        try { await reviewApi.remove(id); load(); } catch { /* bo qua */ }
+        if (!window.confirm('Xac nhan xoa danh gia nay?')) return;
+        try { await reviewApi.remove(id); load(); } catch { }
     };
+
+    const totalPages = Math.ceil(totalCount / pageSize);
 
     return (
         <div>
-            <div className="content-header"><h1>Quản lý đánh giá ({reviews.length})</h1></div>
+            <div className="content-header"><h1>Quan ly danh gia ({totalCount})</h1></div>
             <div className="card">
                 <div className="card-body table-responsive p-0">
                     {loading ? (
                         <div className="text-center p-4"><div className="spinner-border text-primary"></div></div>
                     ) : (
                         <table className="table table-hover">
-                            <thead><tr><th>ID</th><th>Sản phẩm</th><th>Người đánh giá</th><th>Sao</th><th>Nội dung</th><th>Ngày</th><th>Hành động</th></tr></thead>
+                            <thead><tr><th>ID</th><th>San pham</th><th>Nguoi danh gia</th><th>Sao</th><th>Noi dung</th><th>Ngay</th><th>Hanh dong</th></tr></thead>
                             <tbody>
                                 {reviews.map(r => (
                                     <tr key={r.id}>
@@ -36,13 +48,23 @@ const Reviews = () => {
                                         <td>{'*'.repeat(r.stars)}</td>
                                         <td>{r.comment || '-'}</td>
                                         <td>{new Date(r.createdAt).toLocaleDateString('vi-VN')}</td>
-                                        <td><button className="btn btn-sm btn-danger" onClick={() => remove(r.id)}><i className="fas fa-trash"></i> Xóa</button></td>
+                                        <td><button className="btn btn-sm btn-danger" onClick={() => remove(r.id)}><i className="fas fa-trash"></i> Xoa</button></td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     )}
                 </div>
+                {totalPages > 1 && (
+                    <div className="card-footer d-flex justify-content-between align-items-center">
+                        <span>Tong: {totalCount} danh gia</span>
+                        <div>
+                            <button className="btn btn-sm btn-outline-secondary mr-1" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>Truoc</button>
+                            <span className="mx-2">Trang {page}/{totalPages}</span>
+                            <button className="btn btn-sm btn-outline-secondary ml-1" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>Sau</button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

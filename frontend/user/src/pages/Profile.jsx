@@ -88,13 +88,43 @@ export function ProfilePage() {
     }
   };
 
+  const handleConfirmReceived = async (id) => {
+    if (!confirm('Xác nhận đã nhận hàng?')) return;
+    try {
+      await orderApi.confirmReceived(id);
+      loadOrders();
+      showToast('Xác nhận thành công! Bạn có thể đánh giá sản phẩm.');
+    } catch (error) {
+      showToast(error.response?.data?.message || 'Xác nhận thất bại');
+    }
+  };
+
   const statusMap = {
     Pending: 'Chờ xử lý',
-    Confirmed: 'Đã xác nhận',
-    Shipping: 'Đang giao',
+    Preparing: 'Đang chuẩn bị hàng',
+    Shipping: 'Đang vận chuyển',
+    Delivered: 'Đã giao',
     Completed: 'Hoàn thành',
     Cancelled: 'Đã hủy'
   };
+
+  const statusColor = {
+    Pending: { bg: '#fff3e0', color: '#e65100' },
+    Preparing: { bg: '#e3f2fd', color: '#1565c0' },
+    Shipping: { bg: '#f3e5f5', color: '#7b1fa2' },
+    Delivered: { bg: '#e8f5e9', color: '#2e7d32' },
+    Completed: { bg: '#e8f5e9', color: '#4a7c59' },
+    Cancelled: { bg: '#fde8ee', color: '#c2185b' }
+  };
+
+  function getDeliveredCountdown(order) {
+    if (order.status !== 'Delivered' || !order.deliveredAt) return null;
+    var ms = 72 * 60 * 60 * 1000 - (Date.now() - new Date(order.deliveredAt).getTime());
+    if (ms <= 0) return 'Sắp tự động hoàn thành';
+    var h = Math.floor(ms / 3600000);
+    var m = Math.floor((ms % 3600000) / 60000);
+    return 'Tự hoàn thành sau ' + h + 'h' + m + 'p nếu không xác nhận';
+  }
 
   return (
     <div className="page">
@@ -199,60 +229,85 @@ export function ProfilePage() {
                   Bạn chưa có đơn hàng nào
                 </div>
               ) : (
-                orders.map(order => (
-                  <div key={order.id} style={{
-                    border: '1px solid var(--border)', borderRadius: 12,
-                    padding: 20, marginBottom: 16
-                  }}>
-                    <div style={{
-                      display: 'flex', justifyContent: 'space-between',
-                      alignItems: 'center', marginBottom: 12
+                orders.map(order => {
+                  const sc = statusColor[order.status] || { bg: '#f5f5f5', color: '#333' };
+                  const countdown = getDeliveredCountdown(order);
+                  const canCancel = order.status === 'Pending' || order.status === 'Preparing';
+                  const canConfirm = order.status === 'Delivered';
+                  const canReview = order.status === 'Completed';
+                  return (
+                    <div key={order.id} style={{
+                      border: '1px solid var(--border)', borderRadius: 12,
+                      padding: 20, marginBottom: 16
                     }}>
-                      <div>
-                        <span style={{ fontWeight: 700 }}>Đơn #{order.orderCode}</span>
-                        <span style={{ fontSize: 13, color: 'var(--muted)', marginLeft: 12 }}>
-                          {new Date(order.createdAt).toLocaleDateString('vi-VN')}
-                        </span>
-                      </div>
-                      <span style={{
-                        padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 700,
-                        background: order.status === 'Completed' ? '#e8f5e9' :
-                          order.status === 'Cancelled' ? '#fde8ee' : '#fff3e0',
-                        color: order.status === 'Completed' ? '#4a7c59' :
-                          order.status === 'Cancelled' ? 'var(--rose)' : '#e65100'
-                      }}>
-                        {statusMap[order.status] || order.status}
-                      </span>
-                    </div>
-
-                    {order.orderDetails && order.orderDetails.map(od => (
-                      <div key={od.id} style={{
+                      <div style={{
                         display: 'flex', justifyContent: 'space-between',
-                        fontSize: 14, padding: '4px 0', color: '#555'
+                        alignItems: 'center', marginBottom: 12
                       }}>
-                        <span>{od.product?.name || `SP #${od.productId}`} x{od.quantity}</span>
-                        <span>{fmt(od.unitPrice * od.quantity)}</span>
+                        <div>
+                          <span style={{ fontWeight: 700 }}>Đơn #{order.orderCode}</span>
+                          <span style={{ fontSize: 13, color: 'var(--muted)', marginLeft: 12 }}>
+                            {new Date(order.createdAt).toLocaleDateString('vi-VN')}
+                          </span>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <span style={{
+                            padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 700,
+                            background: sc.bg, color: sc.color
+                          }}>
+                            {statusMap[order.status] || order.status}
+                          </span>
+                          {countdown && (
+                            <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>{countdown}</div>
+                          )}
+                        </div>
                       </div>
-                    ))}
 
-                    <div style={{
-                      display: 'flex', justifyContent: 'space-between',
-                      alignItems: 'center', marginTop: 12,
-                      paddingTop: 12, borderTop: '1px solid var(--border)'
-                    }}>
-                      <span style={{ fontWeight: 800, color: 'var(--rose)' }}>
-                        Tổng: {fmt(order.totalAmount)}
-                      </span>
-                      {(order.status === 'Pending' || order.status === 'Confirmed') && (
-                        <button className="btn btn-ghost"
-                          style={{ fontSize: 12, color: 'red' }}
-                          onClick={() => handleCancelOrder(order.id)}>
-                          Hủy đơn
-                        </button>
-                      )}
+                      {order.orderDetails && order.orderDetails.map(od => (
+                        <div key={od.id} style={{
+                          display: 'flex', justifyContent: 'space-between',
+                          fontSize: 14, padding: '4px 0', color: '#555'
+                        }}>
+                          <span>{od.product?.name || `SP #${od.productId}`} x{od.quantity}</span>
+                          <span>{fmt(od.unitPrice * od.quantity)}</span>
+                        </div>
+                      ))}
+
+                      <div style={{
+                        display: 'flex', justifyContent: 'space-between',
+                        alignItems: 'center', marginTop: 12,
+                        paddingTop: 12, borderTop: '1px solid var(--border)'
+                      }}>
+                        <span style={{ fontWeight: 800, color: 'var(--rose)' }}>
+                          Tổng: {fmt(order.totalAmount)}
+                        </span>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          {canCancel && (
+                            <button className="btn btn-ghost"
+                              style={{ fontSize: 12, color: 'red' }}
+                              onClick={() => handleCancelOrder(order.id)}>
+                              Hủy đơn
+                            </button>
+                          )}
+                          {canConfirm && (
+                            <button className="btn btn-primary"
+                              style={{ fontSize: 12, padding: '6px 16px' }}
+                              onClick={() => handleConfirmReceived(order.id)}>
+                              Đã nhận hàng
+                            </button>
+                          )}
+                          {canReview && order.orderDetails && (
+                            <button className="btn btn-outline"
+                              style={{ fontSize: 12, padding: '6px 16px' }}
+                              onClick={() => navigate('product', { id: order.orderDetails[0]?.productId })}>
+                              Đánh giá
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           )}

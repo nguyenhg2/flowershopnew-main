@@ -30,15 +30,31 @@ namespace FlowerShop.API.Controllers
 
         [HttpGet("all")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20)
         {
-            var reviews = await _reviewRepository.GetAllAsync();
-            return Ok(reviews.Select(r => new
+            var all = await _reviewRepository.GetAllAsync();
+            var totalCount = all.Count;
+            var items = all
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(r => new
+                {
+                    r.Id, r.Stars, r.Comment, r.CreatedAt,
+                    userName = r.User?.FullName ?? "",
+                    productName = r.Product?.Name ?? ""
+                })
+                .ToList();
+
+            return Ok(new
             {
-                r.Id, r.Stars, r.Comment, r.CreatedAt,
-                userName = r.User?.FullName ?? "",
-                productName = r.Product?.Name ?? ""
-            }));
+                items,
+                totalCount,
+                page,
+                pageSize,
+                totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+            });
         }
 
         [HttpPost]
