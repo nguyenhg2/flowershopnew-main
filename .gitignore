@@ -1,77 +1,25 @@
-```
-# Dependencies
+# Node
 node_modules/
 package-lock.json
+dist/
+build/
 
-# Logs and temp files
-*.log
-*.tmp
+# .NET
+bin/
+obj/
+*.user
+*.suo
+
+# Visual Studio
+.vs/
 
 # Environment
 .env
-.env.local
-*.env.*
+.env.*
 
-# Editors
-.vscode/
-.idea/
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.venv/
-pip-log.txt
-pip-selfcheck.json
-.eggs/
-*.egg-info/
-.nox/
-.coverage
-.coverage.*
-.cache
-.pytest_cache/
-.mypy_cache/
-.tox/
-
-# Build outputs
-dist/
-build/
-*.out
-*.exe
-*.dll
-*.so
-*.a
-*.obj
-
-# OS generated files
+# OS
 .DS_Store
 Thumbs.db
 
-# Compression
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
-```
+# Logs
+*.log
