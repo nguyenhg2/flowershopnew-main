@@ -448,3 +448,4 @@ D:\User\Downloads\Code\flowershopnew-main\backend\FlowerShop.API\obj\Debug\net8.
 D:\User\Downloads\Code\flowershopnew-main\backend\FlowerShop.API\obj\Debug\net8.0\FlowerShop.API.pdb
 D:\User\Downloads\Code\flowershopnew-main\backend\FlowerShop.API\obj\Debug\net8.0\FlowerShop.API.genruntimeconfig.cache
 D:\User\Downloads\Code\flowershopnew-main\backend\FlowerShop.API\obj\Debug\net8.0\ref\FlowerShop.API.dll
+D:\User\Downloads\Code\flowershopnew-main\backend\FlowerShop.API\bin\Debug\net8.0\appsettings.Development.json

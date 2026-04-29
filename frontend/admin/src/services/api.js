@@ -9,7 +9,6 @@ const api = axios.create({
     },
 });
 
-// Add token to requests if available
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('admin_token');
     if (token) {
@@ -18,68 +17,65 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Auth API
+api.interceptors.response.use(
+    (res) => res,
+    (err) => {
+        if (err.response?.status === 401) {
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_user');
+            window.location.href = '/login';
+        }
+        return Promise.reject(err);
+    }
+);
+
 export const authApi = {
     login: (email, password) => api.post('/auth/login', { email, password }),
 };
 
-// Product API
 export const productApi = {
     getAll: (params) => api.get('/products', { params }),
     getById: (id) => api.get(`/products/${id}`),
     create: (data) => api.post('/products', data),
     update: (id, data) => api.put(`/products/${id}`, data),
-    delete: (id) => api.delete(`/products/${id}`),
+    remove: (id) => api.delete(`/products/${id}`),
 };
 
-// Category API
 export const categoryApi = {
-    getAll: (params) => api.get('/categories', { params }),
+    getAll: () => api.get('/categories'),
     getById: (id) => api.get(`/categories/${id}`),
     create: (data) => api.post('/categories', data),
     update: (id, data) => api.put(`/categories/${id}`, data),
-    delete: (id) => api.delete(`/categories/${id}`),
+    remove: (id) => api.delete(`/categories/${id}`),
 };
 
-// Order API
 export const orderApi = {
-    getAll: (params) => api.get('/orders', { params }),
+    getAll: (status) => api.get('/orders/all', { params: status ? { status } : {} }),
     getById: (id) => api.get(`/orders/${id}`),
-    update: (id, data) => api.put(`/orders/${id}`, data),
-    delete: (id) => api.delete(`/orders/${id}`),
+    updateStatus: (id, status) => api.put(`/orders/${id}/status`, { status }),
 };
 
-// Contact API
-export const contactApi = {
-    getAll: (params) => api.get('/contacts', { params }),
-    getById: (id) => api.get(`/contacts/${id}`),
-    delete: (id) => api.delete(`/contacts/${id}`),
-};
-
-// User API
-export const userApi = {
-    getAll: (params) => api.get('/users', { params }),
-    getById: (id) => api.get(`/users/${id}`),
-    create: (data) => api.post('/users', data),
-    update: (id, data) => api.put(`/users/${id}`, data),
-    delete: (id) => api.delete(`/users/${id}`),
-};
-
-// Banner API
 export const bannerApi = {
-    getAll: (params) => api.get('/banners', { params }),
-    getById: (id) => api.get(`/banners/${id}`),
+    getAll: () => api.get('/banners/all'),
     create: (data) => api.post('/banners', data),
     update: (id, data) => api.put(`/banners/${id}`, data),
-    delete: (id) => api.delete(`/banners/${id}`),
+    remove: (id) => api.delete(`/banners/${id}`),
 };
 
-// Review API
 export const reviewApi = {
-    getAll: (params) => api.get('/reviews', { params }),
-    getById: (id) => api.get(`/reviews/${id}`),
-    update: (id, data) => api.put(`/reviews/${id}`, data),
-    delete: (id) => api.delete(`/reviews/${id}`),
+    getAll: () => api.get('/reviews/all'),
+    remove: (id) => api.delete(`/reviews/${id}`),
+};
+
+export const contactApi = {
+    getAll: () => api.get('/contacts'),
+    markRead: (id) => api.put(`/contacts/${id}/read`),
+    remove: (id) => api.delete(`/contacts/${id}`),
+};
+
+export const userApi = {
+    getAll: (params) => api.get('/users', { params }),
+    toggle: (id) => api.put(`/users/${id}/toggle`),
 };
 
 export default api;
