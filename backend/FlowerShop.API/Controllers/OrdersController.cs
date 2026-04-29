@@ -25,10 +25,20 @@ namespace FlowerShop.API.Controllers
             _productRepository = productRepository;
         }
 
+        private int GetUserId()
+        {
+            return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+        }
+
+        private bool IsAdmin()
+        {
+            return User.IsInRole("Admin");
+        }
+
         [HttpGet("my")]
         public async Task<IActionResult> GetMyOrders()
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var userId = GetUserId();
             if (userId == 0) return Unauthorized();
 
             var orders = await _orderRepository.GetByUserAsync(userId);
@@ -55,26 +65,38 @@ namespace FlowerShop.API.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var order = await _orderRepository.GetByIdAsync(id);
-            if (order == null) return NotFound(new { message = "Khong tim thay don hang" });
+            if (order == null)
+                return NotFound(new { message = "Khong tim thay don hang" });
+
+            var userId = GetUserId();
+            if (order.UserId != userId && !IsAdmin())
+                return Forbid();
+
             return Ok(order);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateOrderDto dto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var userId = GetUserId();
             if (userId == 0) return Unauthorized();
+
+            if (dto.Items == null || dto.Items.Count == 0)
+                return BadRequest(new { message = "Don hang phai co it nhat 1 san pham" });
 
             decimal totalAmount = 0;
             var orderDetails = new List<OrderDetail>();
 
             foreach (var item in dto.Items)
             {
+                if (item.Quantity <= 0)
+                    return BadRequest(new { message = "So luong phai lon hon 0" });
+
                 var product = await _productRepository.GetByIdAsync(item.ProductId);
                 if (product == null)
                     return BadRequest(new { message = $"San pham {item.ProductId} khong ton tai" });
                 if (product.Stock < item.Quantity)
-                    return BadRequest(new { message = $"San pham {product.Name} het hang" });
+                    return BadRequest(new { message = $"San pham {product.Name} chi con {product.Stock} san pham" });
 
                 var unitPrice = product.SalePrice ?? product.Price;
                 totalAmount += unitPrice * item.Quantity;
@@ -120,7 +142,8 @@ namespace FlowerShop.API.Controllers
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusDto dto)
         {
             var order = await _orderRepository.GetByIdAsync(id);
-            if (order == null) return NotFound(new { message = "Khong tim thay don hang" });
+            if (order == null)
+                return NotFound(new { message = "Khong tim thay don hang" });
 
             var validStatuses = new[] { "Pending", "Confirmed", "Processing", "Shipping", "Delivered", "Completed", "Cancelled" };
             if (!validStatuses.Contains(dto.Status))
@@ -135,10 +158,15 @@ namespace FlowerShop.API.Controllers
         public async Task<IActionResult> CancelOrder(int id)
         {
             var order = await _orderRepository.GetByIdAsync(id);
-            if (order == null) return NotFound(new { message = "Khong tim thay don hang" });
+            if (order == null)
+                return NotFound(new { message = "Khong tim thay don hang" });
 
-            if (order.Status == "Completed")
-                return BadRequest(new { message = "Khong the huy don da hoan thanh" });
+            var userId = GetUserId();
+            if (order.UserId != userId && !IsAdmin())
+                return Forbid();
+
+            if (order.Status == "Completed" || order.Status == "Cancelled")
+                return BadRequest(new { message = "Khong the huy don hang nay" });
 
             var details = await _orderDetailRepository.GetByOrderAsync(id);
             foreach (var detail in details)
