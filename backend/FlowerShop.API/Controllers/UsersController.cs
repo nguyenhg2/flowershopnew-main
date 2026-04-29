@@ -75,15 +75,20 @@ namespace FlowerShop.API.Controllers
             if (string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Password))
                 return BadRequest(new { message = "Email va mat khau la bat buoc" });
 
-            var existing = await _userService.Authenticate(dto.Email, "");
+            var existing = await _userService.Search(dto.Email, 1, 1);
+            if (existing.Users.Any(u => u.Email == dto.Email))
+                return BadRequest(new { message = "Email da ton tai" });
+
             try
             {
-                var user = await _userService.Register(
-                    dto.FullName ?? "",
-                    dto.Email,
-                    dto.Password,
-                    dto.Phone ?? "",
-                    dto.Role ?? "Customer");
+                var newUser = new User
+                {
+                    FullName = dto.FullName ?? "",
+                    Email = dto.Email,
+                    Phone = dto.Phone ?? "",
+                    Role = dto.Role ?? "Customer"
+                };
+                var user = await _userService.Create(newUser, dto.Password);
                 return Ok(new { user.Id, user.FullName, user.Email, user.Phone, user.Role });
             }
             catch (Exception ex)
